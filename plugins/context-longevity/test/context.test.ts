@@ -146,7 +146,7 @@ function fakeAgent(id: string, registry: FakeToolRegistry, restrictions: string[
 
 describe('deferred tool controller', () => {
   it('restricts a large registry and activates hidden tools', () => {
-    const definitions = Array.from({ length: 25 }, (_, index) => definition(`tool${index}`, `Tool ${index}`))
+    const definitions = Array.from({ length: 30 }, (_, index) => definition(`tool${index}`, `Tool ${index}`))
     definitions[0] = definition('read', 'Read a file')
     definitions[1] = definition('discover_tools', 'Search tools')
     definitions[2] = definition('activate_tools', 'Activate tools')
@@ -181,7 +181,7 @@ describe('deferred tool controller', () => {
   })
 
   it('releases restrictions and prompt sections on dispose', () => {
-    const definitions = Array.from({ length: 25 }, (_, index) => definition(`tool${index}`, `Tool ${index}`))
+    const definitions = Array.from({ length: 30 }, (_, index) => definition(`tool${index}`, `Tool ${index}`))
     const released: string[] = []
     let sectionText: (() => string) | undefined
     const registry = { definitions: () => definitions, restrict: () => () => {} }

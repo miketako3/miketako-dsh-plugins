@@ -150,9 +150,9 @@ export class VirtualModelAdapter extends LlmAdapter {
       const attempt = yield* this.attempt(options, route)
       lastFinishEmitted = attempt.finishEmitted
       if (attempt.kind === 'success') {
-        const usageTokens = attempt.usage?.totalTokens
-          ?? (attempt.usage === undefined ? undefined : attempt.usage.inputTokens + attempt.usage.outputTokens)
-        this.engine.recordSuccess(sessionId, route, usageTokens)
+        // Input tokens are already accounted from the pre-request estimate;
+        // add only the output so the token budget is not double counted.
+        this.engine.recordSuccess(sessionId, route, attempt.usage?.outputTokens)
         this.audit.write({
           ts: Date.now(),
           event: 'route',
