@@ -178,7 +178,7 @@ The restriction is installed with `agent.ctx.tools.restrict({ allow })`. It neve
 - required sections: Primary Request and Intent, Decisions and Constraints, Files and Code, Verification, Open Issues, Next Step
 - file paths observed in tool arguments and authored messages (up to 40)
 - shell commands observed in tool arguments (up to 10)
-- a `## Retained Facts` block that is added only when the model's summary omitted a required section
+- a `## Retained Facts` block added when a required section or an observed file/command is missing from the model's summary
 
 The base engine still owns the durable compaction events, summarization request, token accounting, and fallback behavior. The subclass only appends to the returned summary; it does not rewrite prior session events.
 

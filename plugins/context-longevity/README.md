@@ -60,7 +60,7 @@ Required headings:
 5. Open Issues
 6. Next Step
 
-The engine also appends file paths and shell commands observed in the summarized region, and adds `## Retained Facts` only when a required heading is missing.
+The engine also appends file paths and shell commands observed in the summarized region, and adds `## Retained Facts` when a required heading, file, or command is missing from the summary.
 
 Wire it as a replacement row:
 
