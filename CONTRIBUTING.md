@@ -27,10 +27,14 @@ skills/<name>/
   SKILL.md          # frontmatter + operating instructions
 ```
 
-Skills are not Cordis packages and are not built or tested by `pnpm check`.
-They document a composition of official DSH packages or external CLIs. They
-may include reference material, but do not assume DSH will execute code from a
-skill directory.
+`plugins/antigravity-acp` also carries `assets/SKILL.md`, an embedded copy of
+`skills/antigravity-acp/SKILL.md`. If you change one, copy it to the other; the
+plugin test fails when the bytes differ.
+
+A standalone skill is not a Cordis package and is not built or tested by
+`pnpm check`. Skills document a composition of official DSH packages or
+external CLIs. They may include reference material, but do not assume DSH will
+execute code from a skill directory.
 
 ## Rules that are not negotiable
 

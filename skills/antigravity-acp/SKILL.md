@@ -25,6 +25,12 @@ log and do not enter the parent conversation.
 
 This skill is for **DeepSeek Harness**, not Hermes' own `delegate_task` tool.
 
+If `dsh-plugin-antigravity-acp` is installed, it registers this skill and
+mounts the provider and tool automatically when the official packages are
+present. Configure `command`, `env`, and `permission` on the plugin row, then
+skip the manual [Mount](#mount-the-provider-and-a-tool) section. The manual
+rows remain the fallback for a skill-only install.
+
 ## When to use
 
 - A read-only investigation, repository summary, design review, or second
@@ -96,6 +102,8 @@ Append to the active profile patch, normally
   config:
     provider: antigravity
     toolName: subagent_antigravity
+    modelSelection: false
+    maxDepth: provider-managed
 ```
 
 Notes:
@@ -106,7 +114,10 @@ Notes:
 - If you use the login cache, omit the `env` block entirely.
 - Do not set `agentPreset`, `agentOptions`, `outputSchema`, or `depthLimit`.
   The ACP provider advertises no support for them and rejects the run before
-  spawn. Keep `modelSelection: false` on the tool row for the same reason.
+  spawn. The tool row keeps `modelSelection: false` for the same reason.
+- `maxDepth: provider-managed` is required: the ACP provider cannot enforce a
+  numeric DSH recursion budget. A numeric `maxDepth` (including the default)
+  makes the tool row fail to mount.
 - `permission: reject` blocks every ACP permission request. That is the safe
   default for review, but it can also block shell commands the child would use
   for `git` or tests. If the task needs commands, switch to `allow` **and**

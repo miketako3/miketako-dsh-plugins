@@ -1,0 +1,14 @@
+# Install this row, then set `command` to the absolute path from `which agy`.
+# When the official ACP backend and tool packages are installed, the plugin
+# mounts them automatically; see README.md for the fallback manual rows.
+- insert:
+    - id: antigravity-acp
+      name: 'dsh-plugin-antigravity-acp'
+      config:
+        providerName: antigravity
+        command: agy
+        args:
+          - acp
+          - --sandbox
+          - --disable-telemetry
+        permission: reject

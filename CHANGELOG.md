@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Plugins
+
+- Added `dsh-plugin-antigravity-acp`, an integration plugin that registers the
+  `antigravity-acp` skill and, when the optional official packages are present,
+  mounts `@deepseek-ai/dsh-subagent-acp` and a `subagent_antigravity` tool.
+- Missing optional backend or tool packages downgrade the plugin to the skill
+  instead of failing profile startup.
+
 ### Skills
 
 - Added the `antigravity-acp` skill for delegating a standalone task to Google
@@ -9,8 +17,11 @@
 - Documents the required provider and tool rows, credential scrubbing and
   explicit `env` forwarding, permission modes, rejected start-time options,
   and ACP log locations.
-- The skill is documentation only; it does not install the ACP backend or
-  vendor `agy`.
+- The standalone skill is documentation only; it does not install the ACP
+  backend or vendor `agy`. The plugin mounts the backend and tool when they are
+  present.
+- The mounted tool sets `modelSelection: false` and
+  `maxDepth: provider-managed`, matching the ACP provider's capabilities.
 
 ## 0.1.0 — 2026-11-22
 

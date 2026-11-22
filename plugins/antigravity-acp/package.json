@@ -1,0 +1,68 @@
+{
+  "name": "dsh-plugin-antigravity-acp",
+  "version": "0.1.0",
+  "description": "Antigravity CLI (agy acp) delegation for the DeepSeek Harness: mounts the official ACP subagent backend when available and ships the antigravity-acp skill.",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "assets/SKILL.md",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "antigravity",
+    "agy",
+    "acp",
+    "subagent",
+    "agent-skill",
+    "long-horizon"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miketako3/miketako-dsh-plugins.git",
+    "directory": "plugins/antigravity-acp"
+  },
+  "homepage": "https://github.com/miketako3/miketako-dsh-plugins/tree/main/plugins/antigravity-acp",
+  "bugs": {
+    "url": "https://github.com/miketako3/miketako-dsh-plugins/issues"
+  },
+  "engines": {
+    "node": ">=24.9.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run typecheck && pnpm run test && pnpm run build"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.1.0",
+    "@deepseek-ai/dsh-skill": ">=0.2.2-rc.1 <0.3.0",
+    "@deepseek-ai/schemastery": "^3.19.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.1.0",
+    "@deepseek-ai/dsh-skill": "0.2.2-rc.5",
+    "@deepseek-ai/schemastery": "^3.19.0"
+  }
+}

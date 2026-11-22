@@ -1,7 +1,7 @@
 # Skills
 
 Reusable operating instructions for DSH agents. A skill is Markdown plus
-frontmatter, not a Cordis plugin: it tells an agent when and how to use a
+frontmatter, not itself a Cordis plugin: it tells an agent when and how to use a
 capability, while the capability itself is installed separately.
 
 ## Available skills
@@ -39,3 +39,9 @@ this directory only documents a composition built from official DSH packages
 (`@deepseek-ai/dsh-subagent-acp` and `@deepseek-ai/dsh-tool-subagent`) and the
 external `agy` CLI. Installing the skill does not install those packages, and
 installing those packages does not install the skill.
+
+[`dsh-plugin-antigravity-acp`](../plugins/antigravity-acp) is the packaged
+form: it registers this skill from an embedded copy and, when the optional
+official packages are installed, mounts the ACP provider and a
+`subagent_antigravity` tool. The embedded copy and this directory must stay
+byte-identical; the plugin test enforces that.
