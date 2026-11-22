@@ -8,7 +8,7 @@
  * @module dsh-plugin-virtual-router/audit
  */
 
-import { appendFileSync, mkdirSync } from 'node:fs'
+import { appendFileSync, chmodSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import type { RouteConfig } from './config.ts'
 import type { RoutePhase } from './router.ts'
@@ -73,6 +73,11 @@ export class AuditSink {
         this.directoryReady = true
       }
       appendFileSync(this.path, `${JSON.stringify(record)}\n`, { encoding: 'utf8', mode: 0o600 })
+      try {
+        chmodSync(this.path, 0o600)
+      } catch {
+        // A file system without POSIX modes is still usable; keep the audit.
+      }
     } catch (error) {
       this.logger.warn('virtual-router: audit append failed', error)
     }
