@@ -33,7 +33,9 @@ dsh plugin --profile my-profile add /absolute/path/to/miketako-dsh-plugins/plugi
 
 `dsh plugin add` はパッケージの `dsh.bundle.patch` を読み、プロファイルの patch に行を追加します。DSH をソース checkout から動かしている場合は、グローバルの `dsh` ではなくその checkout で `pnpm dsh` を実行してください。
 
-プロファイルが `autoInstallPeers: false` の場合、`dsh plugin add` は peer 依存を自動導入しません。DSH 本体が持つ `@deepseek-ai/cordis`、`dsh-agent`、`dsh-llm`、`dsh-session`、`dsh-tools`、compaction パッケージが見えるようにしてください。見えない場合は、DSH と同じバージョンの `@deepseek-ai/dsh-*` をプロファイルの直接依存に追加します。
+プロファイルが `autoInstallPeers: false` の場合、`dsh plugin add` は peer 依存を自動導入しません。DSH 本体が持つ `@deepseek-ai/cordis`、`dsh-agent`、`dsh-llm`、`dsh-session`、`dsh-tools`、compaction パッケージが見えるようにしてください。これらは DSH ホストが読み込む実体と同じコピーに解決される必要があります。`@deepseek-ai/cordis` や `@deepseek-ai/dsh-agent` を二重に導入するとサービス同一性が壊れます。
+
+ソース checkout から DSH を動かしている場合、ホストが読み込むコピーは `apps/cli/node_modules/@deepseek-ai` です。プロファイルから見えないときは、そのディレクトリを参照できるようにしてください。
 
 ## 1. Durable execution
 

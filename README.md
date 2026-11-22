@@ -45,7 +45,9 @@ pnpm --filter dsh-plugin-durable-exec pack --pack-destination dist
 dsh plugin --profile my-profile add ./dist/dsh-plugin-durable-exec-0.1.0.tgz
 ```
 
-The `dsh` command's profile installer does not install peer dependencies automatically when the profile uses `autoInstallPeers: false`. The DSH installation already provides `@deepseek-ai/cordis`, `@deepseek-ai/dsh-agent`, `@deepseek-ai/dsh-llm`, `@deepseek-ai/dsh-session`, `@deepseek-ai/dsh-tools`, and the compaction packages. If your profile resolves plugins from a directory that cannot see those packages, add the matching `@deepseek-ai/dsh-*` versions as direct profile dependencies at the same version as DSH.
+The `dsh` command's profile installer does not install peer dependencies automatically when the profile uses `autoInstallPeers: false`. The DSH installation already provides `@deepseek-ai/cordis`, `@deepseek-ai/dsh-agent`, `@deepseek-ai/dsh-llm`, `@deepseek-ai/dsh-session`, `@deepseek-ai/dsh-tools`, and the compaction packages. Those peer packages must resolve to the same copies the DSH host loads; installing a second copy of `@deepseek-ai/cordis` or `@deepseek-ai/dsh-agent` can break service identity.
+
+If your profile resolves plugins from a directory that cannot see the installation's packages, make those packages visible to the profile rather than duplicating them. When DSH runs from a source checkout, the checkout's `apps/cli/node_modules/@deepseek-ai` directory is the copy the host loads.
 
 ## 1. Durable execution
 
