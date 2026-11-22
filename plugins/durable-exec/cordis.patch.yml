@@ -1,0 +1,7 @@
+# Bundle patch: one row for the plugin itself.
+#
+# The row is declared here rather than inside apply() so a profile can move,
+# disable, or re-scope it without editing code.
+- insert:
+    - id: durable-exec
+      name: 'dsh-plugin-durable-exec'

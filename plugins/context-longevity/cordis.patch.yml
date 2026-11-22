@@ -1,0 +1,17 @@
+# Bundle patch: the deferred-tool and cache-warming half of the plugin.
+#
+# Structured compaction is a separate row because the base compaction engine
+# rejects configuration keys it does not know. To use it, disable the built-in
+# compaction row and mount this package's `./compaction` entry point instead:
+#
+# - id: compaction-basic
+#   disabled: true
+# - insert:
+#     - id: compaction-longevity
+#       name: 'dsh-plugin-context-longevity/compaction'
+#
+# Web profiles mount compaction per preset, so edit the preset's patch rather
+# than the top-level tree; see README.md.
+- insert:
+    - id: context-longevity
+      name: 'dsh-plugin-context-longevity'

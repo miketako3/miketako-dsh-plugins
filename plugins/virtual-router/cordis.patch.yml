@@ -1,0 +1,6 @@
+# Bundle patch: one row for the plugin itself.
+#
+# model routing is configured on this row; see README.md for a full example.
+- insert:
+    - id: virtual-router
+      name: 'dsh-plugin-virtual-router'
