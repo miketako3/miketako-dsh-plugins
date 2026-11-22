@@ -363,6 +363,8 @@ pnpm check   # typecheck + test + build
 
 Each plugin is an independent package under `plugins/`. Tests use Vitest and Node's real `node:sqlite`; they do not mock the ledger. The router tests construct a fake `LlmAdapter` and assert routing, escalation, fallback, budget stop, and sticky behavior without a network call.
 
+For a manual end-to-end smoke test against a throwaway profile, see [`scripts/live-smoke.sh`](scripts/live-smoke.sh).
+
 Live verification used a throwaway profile with a litellm-compatible endpoint and a 27-tool registry:
 
 - a headless tool turn produced a `COMPLETED` ledger row and an `IDLE` checkpoint;

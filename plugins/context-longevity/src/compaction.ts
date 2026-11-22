@@ -304,6 +304,9 @@ export const name = 'compaction-longevity'
 /** Services required by the base engine. */
 export const inject = BasicCompactionEngine.inject
 
+/** Base compaction schema; the row accepts the same keys as `compaction-basic`. */
+export const Config = BasicCompactionEngine.Config
+
 /**
  * Mount the structured compaction backend as its own loader row.
  * @param ctx - plugin context.
