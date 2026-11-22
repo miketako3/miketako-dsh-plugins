@@ -15,6 +15,7 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-llm'
+import { assembleContextFor } from '@deepseek-ai/dsh-agent'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
 import type { CacheWarmingConfig } from './config.ts'
@@ -93,7 +94,8 @@ export class CacheWarmer {
       if (messages.length === 0 || messages.length > this.config.maxMessages) return
       const selection = agent.model.current() ?? agent.session.requestHeader()?.config
       if (selection === undefined || selection.provider.length === 0 || selection.model.length === 0) return
-      const assembly = await this.ctx.systemPrompt.assemble({ scope: agent.ctx, signal })
+      const assembly = await this.ctx.systemPrompt.assemble(assembleContextFor(agent, signal))
+      this.ctx.logger.info(`context-longevity: warming ${messages.length} messages with ${assembly.tools.length} tools`)
       const stream = this.ctx.llm.stream({
         provider: selection.provider,
         model: selection.model,
