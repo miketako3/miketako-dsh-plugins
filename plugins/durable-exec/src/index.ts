@@ -737,7 +737,7 @@ async function resumeInterrupted(
       ctx.logger.warn(`durable-exec: failed to resume session ${row.sessionId}`)
       ctx.logger.warn(error)
       try {
-        store.markResumeFailed(row.sessionId)
+        store.markResumeFailed(row.sessionId, config.maxAttempts)
       } catch {
         // The store may already be closing during shutdown; the checkpoint remains diagnostic.
       }

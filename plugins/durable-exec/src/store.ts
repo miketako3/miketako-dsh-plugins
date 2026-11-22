@@ -440,10 +440,15 @@ export class LedgerStore {
    * Mark a session idle after a failed resume attempt so it is not retried.
    * @param sessionId - session identity.
    */
-  markResumeFailed(sessionId: string): void {
+  markResumeFailed(sessionId: string, maxAttempts = 1): void {
     this.db.prepare(`
-      UPDATE checkpoints SET status = 'IDLE', updated_at = ? WHERE session_id = ?
-    `).run(Date.now(), sessionId)
+      UPDATE checkpoints SET
+        resume_count = resume_count + 1,
+        last_resumed_at = ?,
+        status = CASE WHEN resume_count + 1 >= ? THEN 'IDLE' ELSE status END,
+        updated_at = ?
+      WHERE session_id = ?
+    `).run(Date.now(), Math.max(1, maxAttempts), Date.now(), sessionId)
   }
 
   /** Close the database handle. */

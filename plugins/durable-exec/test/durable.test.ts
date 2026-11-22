@@ -184,7 +184,11 @@ describe('ledger store', () => {
     expect(store.getCheckpoint('root')?.resumeCount).toBe(1)
     expect(store.listInterrupted(10, 1)).toHaveLength(0)
 
-    store.markResumeFailed('root')
+    store.markResumeFailed('root', 3)
+    expect(store.getCheckpoint('root')?.status).toBe('RUNNING')
+    expect(store.getCheckpoint('root')?.resumeCount).toBe(2)
+    store.markResumeFailed('root', 3)
+    store.markResumeFailed('root', 3)
     expect(store.getCheckpoint('root')?.status).toBe('IDLE')
     store.close()
   })
