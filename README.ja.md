@@ -1,6 +1,6 @@
 # miketako-dsh-plugins
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）で長いタスクを走らせるための、独立した 3 つの Cordis プラグインです。
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）で長いタスクを走らせるための、独立した 3 つの Cordis プラグインと 1 つのエージェントスキルです。
 
 長いタスクは「長いプロンプト」ではありません。ターンをまたいで生き残る実行状態、忘れてはいけない文脈、計画・実装・検証で変わるべきモデル選択という 3 つの問題を、それぞれ別のプラグインとして扱います。
 
@@ -10,7 +10,9 @@
 | [`dsh-plugin-context-longevity`](plugins/context-longevity) | 大量のツール定義を毎回送ってしまい、圧縮で正確なパスやコマンドが消える。 | 任意で `compaction-basic` を構造化圧縮に置換 |
 | [`dsh-plugin-virtual-router`](plugins/virtual-router) | 常に同じモデルを使い、安いモデルや強いモデルを使い分けられない。 | なし（仮想プロバイダと仮想モデルを登録） |
 
-3 つとも MIT、DSH と Node 標準ライブラリ以外の実行時依存なし、DSH の追記専用セッション履歴を書き換えません。
+プラグインは MIT、DSH と Node 標準ライブラリ以外の実行時依存なし、DSH の追記専用セッション履歴を書き換えません。
+
+あわせて [`antigravity-acp`](skills/antigravity-acp) を同梱しています。Google Antigravity CLI（`agy acp`）を DSH 公式の ACP サブエージェントとして使うためのエージェントスキルです。スキルは実行コードではなく指示書なので、プラグインとは別に導入します（[スキル](#スキル)）。
 
 ## 必要環境
 
@@ -18,6 +20,7 @@
 - Node.js `>=24.9.0`（`24.22.1` で検証）
 - `pnpm` 11.x
 - 任意: `litellm` など、DSH に登録済みのプロバイダ
+- 任意: ACP 対応の Antigravity CLI（`agy`）。`antigravity-acp` スキルで使用
 
 npm には公開していません。clone または tarball からインストールします。
 
@@ -36,6 +39,32 @@ dsh plugin --profile my-profile add /absolute/path/to/miketako-dsh-plugins/plugi
 プロファイルが `autoInstallPeers: false` の場合、`dsh plugin add` は peer 依存を自動導入しません。DSH 本体が持つ `@deepseek-ai/cordis`、`dsh-agent`、`dsh-llm`、`dsh-session`、`dsh-tools`、compaction パッケージが見えるようにしてください。これらは DSH ホストが読み込む実体と同じコピーに解決される必要があります。`@deepseek-ai/cordis` や `@deepseek-ai/dsh-agent` を二重に導入するとサービス同一性が壊れます。
 
 ソース checkout から DSH を動かしている場合、ホストが読み込むコピーは `apps/cli/node_modules/@deepseek-ai` です。プロファイルから見えないときは、そのディレクトリを参照できるようにしてください。
+
+## スキル
+
+`skills/` には、公式 DSH パッケージや外部 CLI を組み合わせるためのエージェントスキルを置いています。3 つのプラグインとは独立しています。スキルを入れても Cordis の行は増えず、プラグインを入れてもスキルは入りません。
+
+### `antigravity-acp`
+
+[`skills/antigravity-acp`](skills/antigravity-acp) は、Antigravity に委譲すべき場面、`@deepseek-ai/dsh-subagent-acp` と対になる `dsh-tool-subagent` 行の設定、子プロセスへの認証の渡し方、ACP バックエンドが拒否する起動時オプションを説明します。`permission: reject` の読み取り専用レビューと、`--sandbox` 付きの `permission: allow` の編集作業の両方を扱います。
+
+DSH プロファイルが読み込むファイルシステム上のスキルルートへ導入します。
+
+```bash
+git clone https://github.com/miketako3/miketako-dsh-plugins.git
+cd miketako-dsh-plugins
+
+mkdir -p ~/.agents/skills
+ln -s "$(pwd)/skills/antigravity-acp" ~/.agents/skills/antigravity-acp
+```
+
+別のルートからスキルを読む構成なら、そちらへリンクしてください。設定例の正本はスキル側ですが、実行には公式 ACP バックエンドをプロファイルへ入れる必要があります。
+
+```bash
+dsh plugin --profile my-profile add @deepseek-ai/dsh-subagent-acp
+```
+
+スキル一覧と導入方法は [`skills/README.md`](skills/README.md) を参照してください。
 
 ## 1. Durable execution
 

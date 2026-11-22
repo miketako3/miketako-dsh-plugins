@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving long-horizon DSH behavior. This repository is a pnpm workspace; each plugin under `plugins/` is an independent package.
+Thanks for improving long-horizon DSH behavior. This repository is a pnpm workspace; each plugin under `plugins/` is an independent package, and each agent skill under `skills/` is an independent Markdown directory.
 
 ## Setup
 
@@ -22,7 +22,15 @@ plugins/<name>/
   test/             # Vitest suites
   cordis.patch.yml  # bundle row appended by `dsh plugin add`
   README.md
+
+skills/<name>/
+  SKILL.md          # frontmatter + operating instructions
 ```
+
+Skills are not Cordis packages and are not built or tested by `pnpm check`.
+They document a composition of official DSH packages or external CLIs. They
+may include reference material, but do not assume DSH will execute code from a
+skill directory.
 
 ## Rules that are not negotiable
 
@@ -47,6 +55,7 @@ plugins/<name>/
 - Add a regression test that fails before the change. Tests use real `node:sqlite` for the ledger and a fake `LlmAdapter` for routing.
 - Document new configuration keys in the plugin README and, when user-visible, in the root README.
 - If a change alters the bundle patch shape, update `cordis.patch.yml` and mention the migration in the pull request.
+- For a skill, keep the frontmatter `name` equal to the directory name, test every command you document, and state which official package or external CLI the skill assumes. Do not copy credentials or machine-specific absolute paths into a skill; use placeholders such as `/absolute/path/to/agy`.
 
 ## Commit and pull request
 

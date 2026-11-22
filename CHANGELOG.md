@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Skills
+
+- Added the `antigravity-acp` skill for delegating a standalone task to Google
+  Antigravity CLI (`agy acp`) through `@deepseek-ai/dsh-subagent-acp`.
+- Documents the required provider and tool rows, credential scrubbing and
+  explicit `env` forwarding, permission modes, rejected start-time options,
+  and ACP log locations.
+- The skill is documentation only; it does not install the ACP backend or
+  vendor `agy`.
+
 ## 0.1.0 — 2026-11-22
 
 Initial public release.

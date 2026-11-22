@@ -1,6 +1,6 @@
 # miketako-dsh-plugins
 
-Long-horizon autonomy for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH), packaged as three independent Cordis plugins.
+Long-horizon autonomy for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH), packaged as three independent Cordis plugins plus one agent skill.
 
 A long task is not a long prompt. It is a sequence of turns that must survive a crash, a context window that must not forget what matters, and a model choice that should change as the work moves from planning to implementation to verification. These plugins address those three failure modes separately, and compose when all three are installed.
 
@@ -10,7 +10,9 @@ A long task is not a long prompt. It is a sequence of turns that must survive a 
 | [`dsh-plugin-context-longevity`](plugins/context-longevity) | A large tool registry is sent on every request, and compaction drops exact paths and commands. | Optionally replaces `compaction-basic` with a structured summarizer. |
 | [`dsh-plugin-virtual-router`](plugins/virtual-router) | Every request uses one model, even when a cheaper or stronger one is appropriate. | No; it registers a new provider and a virtual model. |
 
-All three are MIT licensed, have no runtime dependency outside DSH and the Node standard library, and keep DSH's append-only session history untouched.
+The plugins are MIT licensed, have no runtime dependency outside DSH and the Node standard library, and keep DSH's append-only session history untouched.
+
+The repository also ships [`antigravity-acp`](skills/antigravity-acp), an agent skill for delegating a standalone task to Google Antigravity CLI (`agy acp`) through DSH's official ACP subagent backend. This skill carries instructions, not runtime code; see [Skills](#skills).
 
 ## Requirements
 
@@ -18,6 +20,7 @@ All three are MIT licensed, have no runtime dependency outside DSH and the Node 
 - Node.js `>=24.9.0` (verified on `24.22.1`)
 - `pnpm` `11.x`
 - Optional: a working provider registered in DSH, such as `litellm`, for the router
+- Optional: Antigravity CLI (`agy`) with ACP support, for the `antigravity-acp` skill
 
 The plugins are not published to npm. Install them from a clone or from packed tarballs.
 
@@ -48,6 +51,42 @@ dsh plugin --profile my-profile add ./dist/dsh-plugin-durable-exec-0.1.0.tgz
 The `dsh` command's profile installer does not install peer dependencies automatically when the profile uses `autoInstallPeers: false`. The DSH installation already provides `@deepseek-ai/cordis`, `@deepseek-ai/dsh-agent`, `@deepseek-ai/dsh-llm`, `@deepseek-ai/dsh-session`, `@deepseek-ai/dsh-tools`, and the compaction packages. Those peer packages must resolve to the same copies the DSH host loads; installing a second copy of `@deepseek-ai/cordis` or `@deepseek-ai/dsh-agent` can break service identity.
 
 If your profile resolves plugins from a directory that cannot see the installation's packages, make those packages visible to the profile rather than duplicating them. When DSH runs from a source checkout, the checkout's `apps/cli/node_modules/@deepseek-ai` directory is the copy the host loads.
+
+## Skills
+
+The `skills/` directory holds agent skills that compose official DSH packages
+or external CLIs. They are independent of the three plugins: installing a
+skill does not install a Cordis row, and installing a plugin does not install a
+skill.
+
+### `antigravity-acp`
+
+[`skills/antigravity-acp`](skills/antigravity-acp) teaches an agent when to
+delegate to Antigravity, how to mount `@deepseek-ai/dsh-subagent-acp` and a
+matching `dsh-tool-subagent` row, how authentication is passed to the child,
+and which start-time options the ACP backend rejects. It covers both
+`permission: reject` review work and `permission: allow` editing work with
+`--sandbox`.
+
+Install it into the filesystem skill root your DSH profile loads:
+
+```bash
+git clone https://github.com/miketako3/miketako-dsh-plugins.git
+cd miketako-dsh-plugins
+
+mkdir -p ~/.agents/skills
+ln -s "$(pwd)/skills/antigravity-acp" ~/.agents/skills/antigravity-acp
+```
+
+If the profile discovers skills through another root, link it there instead.
+The skill itself is the source of truth for the configuration example; the
+runtime still needs the official ACP backend installed in the profile:
+
+```bash
+dsh plugin --profile my-profile add @deepseek-ai/dsh-subagent-acp
+```
+
+See [`skills/README.md`](skills/README.md) for the catalog and install notes.
 
 ## 1. Durable execution
 
@@ -363,7 +402,7 @@ pnpm build
 pnpm check   # typecheck + test + build
 ```
 
-Each plugin is an independent package under `plugins/`. Tests use Vitest and Node's real `node:sqlite`; they do not mock the ledger. The router tests construct a fake `LlmAdapter` and assert routing, escalation, fallback, budget stop, and sticky behavior without a network call.
+Each plugin is an independent package under `plugins/`, and each skill is an independent Markdown directory under `skills/`. Tests use Vitest and Node's real `node:sqlite`; they do not mock the ledger. The router tests construct a fake `LlmAdapter` and assert routing, escalation, fallback, budget stop, and sticky behavior without a network call.
 
 For a manual end-to-end smoke test against a throwaway profile, see [`scripts/live-smoke.sh`](scripts/live-smoke.sh).
 
@@ -383,6 +422,7 @@ Live verification used a throwaway profile with a litellm-compatible endpoint an
 - Auto-resume is best-effort. A headless process can exit before the resumed turn finishes; the next boot retries up to `autoResume.maxAttempts`.
 - The ledger stores tool arguments and results unredacted. Tool output may contain secrets; protect the DSH home directory and the ledger file.
 - Cache warming is off by default and costs tokens.
+- The `antigravity-acp` skill documents a composition with an external CLI. It does not vendor `agy`, the ACP backend, or Antigravity credentials; the skill's verification steps must be repeated after an `agy` or DSH upgrade.
 
 ## License
 

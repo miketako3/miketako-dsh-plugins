@@ -17,13 +17,14 @@ Include:
 
 You should receive an acknowledgement within a few days. Please allow time for a fix before public disclosure.
 
-## What these plugins touch
+## What this repository touches
 
 | Plugin | Data written | Location |
 | --- | --- | --- |
 | `durable-exec` | Tool arguments, results, errors, checkpoints, Git HEAD | `databasePath` (default `$DSH_HOME/durable-exec/ledger.db`) |
 | `context-longevity` | In-memory deferred-tool state; no session events | Process memory |
 | `virtual-router` | Routing metadata, token estimates, optional cost estimates | `auditPath` (default `$DSH_HOME/virtual-router/audit.jsonl`) |
+| `antigravity-acp` skill | No data of its own; documents a profile patch for an external ACP child | Profile patch (for example `$DSH_HOME/profiles/web/cordis.patch.yml`) |
 
 The ledger and audit file are created with POSIX mode `0600`. The ledger may contain file contents, command output, or credentials echoed by a tool. Treat it as sensitive as the DSH session log.
 
@@ -41,4 +42,5 @@ The ledger and audit file are created with POSIX mode `0600`. The ledger may con
 - Tool results are stored unredacted. A secret printed by `bash` will be present in the ledger until you delete the database.
 - Cache warming, when enabled, sends the request prefix to the configured provider. It is off by default.
 - Auto-resume resumes interrupted root sessions automatically. Disable `autoResume.enabled` if an unattended restart must never continue work without a human.
+- The `antigravity-acp` skill configures an external CLI that runs with its own permissions. Use `permission: reject` for reviews, and `permission: allow` only with `--sandbox` on a disposable worktree. The profile patch should reference credentials through `!!js process.env.NAME`, never literal secrets.
 - The router's phase detection is heuristic and can misclassify a turn. Use `forceTier` or explicit `phaseRoutes` when predictability matters more than cost.

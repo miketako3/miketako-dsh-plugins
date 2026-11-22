@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Long-horizon autonomy plugins for the DeepSeek Harness (DSH).",
+  "description": "Long-horizon plugins and agent skills for the DeepSeek Harness (DSH).",
   "license": "MIT",
   "author": "miketako3",
   "packageManager": "pnpm@11.28.5",
@@ -38,6 +38,9 @@
     "long-horizon",
     "durable-execution",
     "compaction",
-    "model-routing"
+    "model-routing",
+    "agent-skill",
+    "antigravity",
+    "acp"
   ]
 }
